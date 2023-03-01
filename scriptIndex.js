@@ -1,12 +1,9 @@
-//fetching the search Bar element and adding key up event listener to it
+// fetching the search Bar element and adding key up event listener to it
 let searchBar = document.getElementById("searchHero");
 console.log(searchBar.value);
 searchBar.addEventListener('keyup', getSearchedSuperHeroes);
 
-//****** */
-
-
-//creating and acessing local storage for user's seemless experience
+// Generating the Local Storage for User's Experience
 
 let myLocalStorage = window.localStorage;
 
@@ -19,9 +16,7 @@ if (!myLocalStorage.getItem('superheroID')) {
 
 myLocalStorage.setItem('showSuperHero', '');
 
-//****** */
-
-//function display all the search suggested super heroes
+// This function will display the Searched Super Heros
 
 function getSearchedSuperHeroes() {
 
@@ -34,39 +29,36 @@ function getSearchedSuperHeroes() {
 
 
 
-    //api's url to search heroes according to the name
+    // This API URL will help in searching the Super Hero
     let url = 'https://superheroapi.com/api.php/1500237820345742/search/' + searchBar.value;
 
-    //creating a new XML HTTP request
+    // Creating a new XML HTTP Request
 
     var apiRequest = new XMLHttpRequest();
 
 
     apiRequest.onreadystatechange = function () {
         console.log(this.status)
-        //if request is made successfully with status as 200 and in ready state 4
+        // if readystate is 4 and status is 200 then data will get fetched from the server
         if (this.readyState == 4 && this.status == 200) {
 
-            //fetching data from the api in data variable
+            // creating a variable and assigning the data to it
             var data = JSON.parse(this.responseText);
             console.log(data);
 
-
-            //to handle backspace or no input value errors in the search Bar
-
+            // To handle the backspace and other related things
             if (data.response === "error") {
                 displaySearchedHeroesResult.innerHTML = '<h2 class = "loading-and-error-font"> Oops ! There is no super hero with such name, please make sure that you are spelling it correctly :/ </h2> ';
                 return;
-
             }
 
-            //exit if searched query does not match the displayd result
+            // if searched result will not match then just exit
 
             if (searchBar.value != data["results-for"]) {
                 return;
             }
 
-            //reset the display container after showing results
+            // after showing the result just display the Input Field as empty
 
             displaySearchedHeroesResult.innerHTML = '';
 
@@ -74,19 +66,17 @@ function getSearchedSuperHeroes() {
             //adding all the results to the DOM
 
             for (let hero of data.results) {
-
                 let heroCard = document.createElement('div');
                 heroCard.setAttribute('id', 'heroCard');
                 heroCard.className = 'hero-card';
 
-                //adding on click to ebery hero's displayed hero so that it redirects to the clicked hero's page
+                // adding onClick to the Super Hero's card to redirected to the Information Page
 
                 heroCard.onclick = function () { currSelectedHero(hero.id) };
 
-                //adding hero's details 
+                // adding Hero's Details
 
                 let nameOfHero = document.createElement('span');
-
                 let infoOfHero = document.createTextNode(hero.name);
 
                 nameOfHero.appendChild(infoOfHero);
@@ -99,15 +89,11 @@ function getSearchedSuperHeroes() {
                     hero.image.url ?? "default-hero-image.jpeg"
                 );
 
-
-
-
-
-                //adding favourites button
+                // adding favourite buttons
                 let favButton = document.createElement("BUTTON");
                 favButton.className = 'fav-btn';
 
-                //here in this section, going to create an array and check if the super hero is already added to favourites and style the colour of the favorite button accordingly
+                // here in this section, going to create an array and check if the super hero is already added to favourites and style the colour of the favorite button accordingly
 
                 var arr = JSON.parse(myLocalStorage.getItem('superheroID'));
 
@@ -128,18 +114,18 @@ function getSearchedSuperHeroes() {
 
                 }
 
-                //onClicking, remove or add superhero from favourites
+                // after clicking, remove or add superhero from favourites
 
                 favButton.onclick = function (event) { toggleFavourite(event, hero.id, favButton) };
 
 
-                //appending hero's details the superhero card
+                // appending hero's details the superhero card
 
                 heroCard.appendChild(nameOfHero);
                 heroCard.appendChild(imageOfHero);
                 heroCard.appendChild(favButton);
 
-                //appending the superhero card to the display results
+                // appending the superhero card to the display results
 
                 displaySearchedHeroesResult.appendChild(heroCard);
             }
@@ -154,7 +140,7 @@ ss
 function toggleFavourite(event, heroID, favButton) {
     var data = JSON.parse(myLocalStorage.getItem('superheroID'));
 
-    //delete it , if it already exists, else add it to favs
+    // delete it , if it already exists, else add it to favs
 
     if (data.includes(heroID)) {
         deleteHero(data, heroID);
@@ -185,8 +171,6 @@ function deleteHero(arr, heroID) {
         }
     }
     myLocalStorage.setItem('superheroID', JSON.stringify(arr));
-
-
 }
 
 function currSelectedHero(heroID) {
